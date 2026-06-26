@@ -1,0 +1,21 @@
+﻿# Binaries
+/envd-*
+/orbctl
+/e2b-gateway
+/e2b-local
+/e2b-local.log
+
+# Runtime
+/config.yaml
+/gateway.log
+/gateway.pid
+/claude-darwin-*
+
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store
+
+# Go
+*.test
+coverage.out
