@@ -1,0 +1,54 @@
+server:
+  addr: "127.0.0.1:3000"
+
+runtime:
+  # docker: create one OrbStack/Docker container per sandbox.
+  # orbstack: create one OrbStack VM per sandbox and run envd inside the machine.
+  # applecontainer: create one Apple Container VM-backed container per sandbox on macOS.
+  type: "docker"
+
+docker:
+  # Omit host to use DOCKER_HOST, the current user's OrbStack socket when present, or unix:///var/run/docker.sock.
+  # host: "unix:///var/run/docker.sock"
+  # Docker templates are discovered from tagged local Docker images. Pull or build images before use.
+  # Optional platform override. Empty means let Docker choose, then inspect the selected image.
+  # platform: "linux/amd64"
+  container_name_prefix: "e2b-envd-"
+  # Optional envd override. Empty means choose envd-bin/envd-linux-amd64 or envd-bin/envd-linux-arm64 from the image architecture.
+  # envd_binary: "envd-bin/envd-linux-amd64"
+  # envd runs on container port 49983; Docker assigns a dynamic localhost host port per sandbox.
+  health_timeout_seconds: 30
+
+orbstack:
+  machine_name_prefix: "e2b-sandbox-"
+  default_memory: "2G"
+  default_cpus: "2"
+  default_disk: "16G"
+  # When true, sandbox VMs run as OrbStack isolated machines and no longer see the full macOS filesystem.
+  # In isolated mode, each sandbox volume is exposed through a selective host mount only.
+  isolated: false
+  # Local Linux envd binary used for sandbox envd bootstrap.
+  # The gateway copies it into each sandbox VM before enabling the envd service.
+  envd_binary: "envd-bin/envd-linux-arm64"
+  envd_port: 49983
+  health_timeout_seconds: 60
+  volume_host_path: "~/.e2b-local/volumes"
+
+applecontainer:
+  container_name_prefix: "e2b-sandbox-"
+  # Required unless every template sets prebaked_envd_path.
+  # The runtime copies this binary into non-prebaked Apple Container sandboxes.
+  envd_binary: "envd-bin/envd-linux-arm64"
+  envd_port: 49983
+  health_timeout_seconds: 60
+  default_cpus: 4
+  default_memory_mb: 1024
+  # Images must already be pulled with Apple Container.
+  # For SDK command execution, use an image with /bin/bash.
+  templates:
+    debian-bookworm-slim:
+      image: "docker.io/library/debian:bookworm-slim"
+      cpus: 4
+      memory_mb: 2048
+      # Optional: executable path inside the image when envd is already baked in.
+      # prebaked_envd_path: "/usr/local/bin/envd"
