@@ -413,3 +413,10 @@ go test -tags=go_sdk_integration ./tests/sdk_integration -run TestGoSDKGatewayAp
 ```
 
 Most SDK integration tests read `config.yaml` through `LoadConfig("config.yaml")` and skip when Docker, envd, Node, or SDK dependencies are unavailable. `TestGoSDKGatewayAppleContainerDirectEnvd` builds its own Apple Container config and skips unless `container-apiserver`, the configured envd binary, and the template image are available.
+
+## Known Limitations
+
+- pplecontainer backend requires macOS 13+ and the container-apiserver binary; on other platforms use the docker or orbstack backend.
+- SDK integration tests are skipped automatically when Docker or envd is unavailable (see config.yaml loading in the test suite).
+- The gateway exposes an unauthenticated control endpoint on the local loopback interface; do not bind it to public addresses.
+
