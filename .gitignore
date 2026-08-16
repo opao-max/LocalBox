@@ -19,3 +19,9 @@
 # Go
 *.test
 coverage.out
+
+# Coverage & misc
+coverage.out
+*.test
+/tmp/
+
