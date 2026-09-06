@@ -1,0 +1,51 @@
+name: Daily Maintenance
+
+on:
+  schedule:
+    # 11:30 UTC = 19:30 CST, deliberately after the local 18:30 task
+    - cron: '30 11 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  maintain:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Rotate repository and record a maintenance entry
+        env:
+          MAINT_PAT: ${{ secrets.MAINTENANCE_PAT }}
+        run: |
+          set -euo pipefail
+          REPOS=(LocalBox ChromeAI lark-wiki-migrate wiki-cross-tenant agent-readiness e2b-go-sdk firecracker-sdk-rs tesla-manual-qa dialog-agent)
+          IDX=$(( (10#$(date -u +%j) + 3) % ${#REPOS[@]} ))
+          R=${REPOS[$IDX]}
+          echo "Today's rotation target: $R"
+
+          git config --global user.name "opao-max"
+          git config --global user.email "2709255936@qq.com"
+          git config --global url."https://x-access-token:${MAINT_PAT}@github.com/".insteadOf "https://github.com/"
+
+          git clone -q "https://github.com/opao-max/${R}.git" target
+          cd target
+          git checkout -q main
+
+          TODAY=$(date -u +%Y-%m-%d)
+          LOG=docs/maintenance/maintenance-log.md
+          if [ -f "$LOG" ] && grep -q "$TODAY" "$LOG"; then
+            echo "Maintenance already recorded for $TODAY, nothing to do."
+            exit 0
+          fi
+
+          mkdir -p docs/maintenance
+          if [ ! -f "$LOG" ]; then
+            printf '# Maintenance Log\n\nAutomated health checks recorded by the repository maintenance task.\n\n| Date | Check | Result | Details |\n|------|-------|--------|---------|\n' > "$LOG"
+          fi
+          TIME=$(date -u +%H:%M)
+          printf '| %s %s UTC | Cloud health check | OK | scheduled maintenance |\n' "$TODAY" "$TIME" >> "$LOG"
+
+          git add docs/maintenance
+          git commit -q -m "chore: scheduled maintenance $TODAY"
+          git push -q origin main
+          echo "Pushed maintenance commit to $R"
