@@ -10,7 +10,7 @@ require (
 	github.com/gin-gonic/gin v1.10.1
 	github.com/google/uuid v1.6.0
 	github.com/joho/godotenv v1.5.1
-	github.com/oapi-codegen/runtime v1.1.1
+	github.com/oapi-codegen/runtime v1.7.0
 	github.com/opencontainers/image-spec v1.1.1
 	github.com/spf13/cobra v1.8.1
 	github.com/superduck-ai/e2b-go-sdk v0.0.0-20260609140155-cfd77b06d480
