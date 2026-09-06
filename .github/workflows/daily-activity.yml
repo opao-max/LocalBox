@@ -5,6 +5,11 @@ on:
     # 11:30 UTC = 19:30 CST, deliberately after the local 18:30 task
     - cron: '30 11 * * *'
   workflow_dispatch:
+    inputs:
+      target:
+        description: 'Optional: force a specific repository instead of rotation'
+        required: false
+        default: ''
 
 permissions:
   contents: read
@@ -16,11 +21,16 @@ jobs:
       - name: Rotate repository and record a maintenance entry
         env:
           MAINT_PAT: ${{ secrets.MAINTENANCE_PAT }}
+          FORCE_TARGET: ${{ github.event.inputs.target }}
         run: |
           set -euo pipefail
           REPOS=(LocalBox ChromeAI lark-wiki-migrate wiki-cross-tenant agent-readiness e2b-go-sdk firecracker-sdk-rs tesla-manual-qa dialog-agent)
-          IDX=$(( (10#$(date -u +%j) + 3) % ${#REPOS[@]} ))
-          R=${REPOS[$IDX]}
+          if [ -n "${FORCE_TARGET}" ]; then
+            R=${FORCE_TARGET}
+          else
+            IDX=$(( (10#$(date -u +%j) + 3) % ${#REPOS[@]} ))
+            R=${REPOS[$IDX]}
+          fi
           echo "Today's rotation target: $R"
 
           git config --global user.name "opao-max"
