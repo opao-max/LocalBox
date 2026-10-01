@@ -13,7 +13,7 @@ require (
 	github.com/oapi-codegen/runtime v1.7.0
 	github.com/opencontainers/image-spec v1.1.1
 	github.com/spf13/cobra v1.8.1
-	github.com/superduck-ai/e2b-go-sdk v0.0.0-20260609140155-cfd77b06d480
+	github.com/superduck-ai/e2b-go-sdk v0.0.2
 	golang.org/x/sys v0.39.0
 	gopkg.in/yaml.v3 v3.0.1
 )
