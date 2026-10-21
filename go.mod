@@ -1,6 +1,6 @@
 module e2b-local
 
-go 1.24.0
+go 1.26.0
 
 require (
 	github.com/docker/docker v27.5.1+incompatible
@@ -14,7 +14,7 @@ require (
 	github.com/opencontainers/image-spec v1.1.1
 	github.com/spf13/cobra v1.8.1
 	github.com/superduck-ai/e2b-go-sdk v0.0.0-20260609140155-cfd77b06d480
-	golang.org/x/sys v0.39.0
+	golang.org/x/sys v0.48.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
